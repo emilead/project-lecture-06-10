@@ -56,10 +56,10 @@ componentDidMount(){
       <View style={styles.container}>
         <Image style={{width:130, height:130}} source={{uri: "https://openweathermap.org/img/w/" + icon+".png"}}/>
         <Text style={styles.title}>PUP Weather Expert</Text>
-        <Text>{ weatherCondition ? 'Today '+ weatherInfo[weatherCondition].title : 'Waiting for weather conditions'}</Text>
-        <Text>{ weatherCondition ? weatherInfo[weatherCondition].subtitle : ''}</Text>
+        <Text style={styles.paragraph1}>{ weatherCondition ? 'Today '+ weatherInfo[weatherCondition].title : 'Waiting for weather conditions'}</Text>
+        <Text style={styles.paragraph2}>{ weatherCondition ? weatherInfo[weatherCondition].subtitle : ''}</Text>
         <Text>{temperature ? temperature +'°' : ''}</Text>
-        <Image style={{width: 130, height: 130}} source={weatherDog}/>
+        <Image style={{width: 130, height: 130, }} source={weatherDog}/>
       </View>
     );
   }
@@ -68,11 +68,19 @@ componentDidMount(){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#EBBF21',
     alignItems: 'center',
     justifyContent: 'center'
   },
   title: {
     fontSize: 26,
+    color: "lightseagreen",
+  },
+  paragraph1: {
+    fontSize: 24,
+    color: "#fff",
+  },
+  paragraph2: {
+    color: "#fff",
   }
 });
