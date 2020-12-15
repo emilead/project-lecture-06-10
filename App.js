@@ -1,86 +1,134 @@
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import * as Location from 'expo-location';
-import * as Permissions from 'expo-permissions';
+import CameraScreen from './components/CameraScreen';
+import HomeScreen from './components/HomeScreen';
+import ImagePickerExample from './components/ImagePicker';
+import ProfilePageScreen from './components/ProfilePageScreen';
+import MapRoutesScreen from './components/MapRoutesScreen';
+import LoginScreen from './components/LoginScreen';
+import SignUpScreen from './components/SignUpScreen';
+import NewPassword from './components/NewPassword';
+import WeatherScreen from './components/WeatherScreen';
+import { Platform } from 'react-native';
 
-import { API_KEY } from './utils/WeatherAPIKey';
-import {weatherInfo} from './utils/WeatherDescriptions';
+const Drawer = createDrawerNavigator();
 
-import weatherDog from './assets/weatherDog.png';
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Drawer.Navigator initialRouteName="HomeScreen">
+        <Drawer.Screen
+          name="LogIn"
+          component={LoginScreen}
+          options={{
+            headerShown: true,
+            drawerIcon: config => <Icon
+              size={40}
+              name={Platform.OS === 'android' ? 'md-list' : 'ios-log-in'}
+            ></Icon>
+          }}
+        />
+        <Drawer.Screen
+          name="HomeScreen"
+          component={HomeScreen}
+          options={{
+            headerShown: false,
+            drawerIcon: config => <Icon
+              size={40}
+              name={Platform.OS === 'android' ? 'md-list' : 'ios-home'}
+            ></Icon>
+          }}
+        />
+        <Drawer.Screen
+          name="SignUp"
+          component={SignUpScreen}
+          options={{
+            headerShown: true,
+            drawerIcon: config => <Icon
+              size={40}
+              name={Platform.OS === 'android' ? 'md-list' : 'ios-log-in'}
+            ></Icon>
+          }}
+        />
+        <Drawer.Screen
+          name="Forgot Password"
+          component={NewPassword}
+          options={{
+            headerShown: true,
+            drawerIcon: config => <Icon
+              size={40}
+              name={Platform.OS === 'android' ? 'md-list' : 'ios-help'}
+            ></Icon>
+          }}
+        />
 
-export default class App extends React.Component {
-  state= {
-    temperature: 0,
-    weatherCondition: null,
-    location:null,
-    icon: null,
-    errorMessage:""
-  }
+        <Drawer.Screen
+          name="ProfilePage"
+          component={ProfilePageScreen}
+          options={{
+            headerShown: true,
+            title: "Profile page",
+            drawerIcon: config => <Icon
+              size={40}
+              name={Platform.OS === 'android' ? 'md-list' : 'ios-happy'}
+            ></Icon>
+          }}
 
-getLocationAsync = async () => {
-  let {status } = await Permissions.askAsync(Permissions.LOCATION);
-  if (status !== 'granted') {
-    this.setState ({
-      errorMessage: 'You do not have permission',
-    });
-  }
-  let location = await Location.getCurrentPositionAsync({accuracy:Location.Accuracy.BestForNavigation});
-  const { latitude , longitude } = location.coords
-  this.setState({location: {latitude, longitude}});
+        />
+
+        <Drawer.Screen
+          name="MapRoutes"
+          component={MapRoutesScreen}
+          options={{
+            headerShown: true,
+            title: "Find suggested routes",
+            drawerIcon: config => <Icon
+              size={40}
+              name={Platform.OS === 'android' ? 'md-list' : 'ios-image'}
+            ></Icon>
+          }}
+        />
+        <Drawer.Screen
+          name="Weather"
+          component={WeatherScreen}
+          options={{
+            headerShown: true,
+            drawerIcon: config => <Icon
+              size={40}
+              name={Platform.OS === 'android' ? 'md-list' : 'ios-cloud'}
+            ></Icon>
+          }}
+        />
+        <Drawer.Screen
+          name="Camera"
+          component={ImagePickerExample}
+          options={{
+            headerShown: true,
+            drawerIcon: config => <Icon
+              size={40}
+              name={Platform.OS === 'android' ? 'md-list' : 'ios-camera'}
+            ></Icon>
+          }}
+        />
+
+        <Drawer.Screen
+          name="Camera2"
+          component={CameraScreen}
+          options={{
+            headerShown: true,
+            drawerIcon: config => <Icon
+              size={40}
+              name={Platform.OS === 'android' ? 'md-list' : 'ios-camera'}
+            ></Icon>
+          }}
+        />
+
+
+
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
 }
-
-fetchWeather(lat, lon) {
-  fetch(
-    `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`
-  )
-    .then(res => res.json())
-    .then(json => {
-      this.setState({
-        temperature: json.main.temp,
-        weatherCondition: json.weather[0].main,
-        icon: json.weather[0].icon,
-      });
-    });
-}
-
-componentDidMount(){
-  this.getLocationAsync().then(()=> {
-    this.fetchWeather(this.state.location.latitude,this.state.location.longitude);
-  })
-}
-
-  render() {
-    const {temperature, weatherCondition, icon } = this.state
-    return (
-      <View style={styles.container}>
-        <Image style={{width:130, height:130}} source={{uri: "https://openweathermap.org/img/w/" + icon+".png"}}/>
-        <Text style={styles.title}>PUP Weather Expert</Text>
-        <Text style={styles.paragraph1}>{ weatherCondition ? 'Today '+ weatherInfo[weatherCondition].title : 'Waiting for weather conditions'}</Text>
-        <Text style={styles.paragraph2}>{ weatherCondition ? weatherInfo[weatherCondition].subtitle : ''}</Text>
-        <Text>{temperature ? temperature +'°' : ''}</Text>
-        <Image style={{width: 130, height: 130, }} source={weatherDog}/>
-      </View>
-    );
-  }
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#EBBF21',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  title: {
-    fontSize: 26,
-    color: "lightseagreen",
-  },
-  paragraph1: {
-    fontSize: 24,
-    color: "#fff",
-  },
-  paragraph2: {
-    color: "#fff",
-  }
-});
